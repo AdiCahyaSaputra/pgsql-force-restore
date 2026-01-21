@@ -168,8 +168,8 @@ if test "$backup_format" = "sql"
     log_message "Using psql to restore SQL dump..."
     psql --host=$db_host --port=$db_port --username=$db_user --dbname=$db_name -f $backup_file 2>&1 | tee -a $log_file
 else
-    log_message "Using pg_restore to restore custom format dump..."
-    pg_restore --host=$db_host --port=$db_port --username=$db_user --dbname=$db_name --verbose --no-owner --no-acl $backup_file 2>&1 | tee -a $log_file
+    log_message "Converting custom format dump to SQL and restoring with psql..."
+    pg_restore --no-owner --no-acl $backup_file 2>&1 | psql --host=$db_host --port=$db_port --username=$db_user --dbname=$db_name 2>&1 | tee -a $log_file
 end
 
 if test $status -ne 0

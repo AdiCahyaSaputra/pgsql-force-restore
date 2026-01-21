@@ -13,7 +13,7 @@ A Fish shell script that force-destroys a PostgreSQL database and rebuilds it fr
 ## Requirements
 
 - Fish shell (3.0+)
-- PostgreSQL client tools (`dropdb`, `createdb`, `psql`, `pg_restore`)
+- PostgreSQL client tools (`dropdb`, `createdb`, `psql`, `pg_restore` for custom format conversion)
 - PostgreSQL server access
 
 ## Installation
@@ -102,7 +102,7 @@ pgsql-force-restore backup.sql postgres:mypass@localhost/mydb
 5. **Force Drop Database**: Uses `dropdb --force` to terminate connections and drop the database
 6. **Create Database**: Creates a fresh database using `createdb`
 7. **Detect Backup Format**: Auto-detects SQL or custom format
-8. **Restore Backup**: Uses `psql` for SQL dumps or `pg_restore` for custom format
+8. **Restore Backup**: Uses `psql` for all restores (converts custom format to SQL first)
 
 ## Logging
 
@@ -129,9 +129,11 @@ The script uses strict error handling:
 
 ## Supported Backup Formats
 
-- **SQL Dumps** (`.sql`): Plain text SQL commands, restored with `psql`
-- **Custom Format** (`.dump`): PostgreSQL custom format, restored with `pg_restore`
+- **SQL Dumps** (`.sql`): Plain text SQL commands, restored directly with `psql`
+- **Custom Format** (`.dump`): PostgreSQL custom format, converted to SQL and restored with `psql`
 - **Auto-detection**: Checks file extension and file header to determine format
+
+Note: Both formats are restored using `psql`. Custom format files are automatically converted to SQL format before restoration.
 
 ## Security Notes
 
