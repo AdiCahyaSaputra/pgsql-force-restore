@@ -163,14 +163,9 @@ log_message ""
 
 # Restore backup
 log_message "Step 3: Restoring backup from '$backup_file'..."
+log_message "Log from pg_restore:"
 
-if test "$backup_format" = "sql"
-    log_message "Using psql to restore SQL dump..."
-    psql --host=$db_host --port=$db_port --username=$db_user --dbname=$db_name -f $backup_file 2>&1 | tee -a $log_file
-else
-    log_message "Converting custom format dump to SQL and restoring with psql..."
-    pg_restore --no-owner --no-acl $backup_file 2>&1 | psql --host=$db_host --port=$db_port --username=$db_user --dbname=$db_name 2>&1 | tee -a $log_file
-end
+pg_restore --host=$db_host --port=$db_port --username=$db_user --dbname=$db_name --verbose --no-owner --no-acl $backup_file &>> $log_file
 
 if test $status -ne 0
     log_message "Error: Failed to restore backup"
